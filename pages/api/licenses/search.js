@@ -1,5 +1,14 @@
 import { prisma } from '../../../lib/prisma'
 
+// Add environment check
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL is not set')
+}
+
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  console.error('NEXT_PUBLIC_SUPABASE_URL is not set')
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

@@ -1,4 +1,0 @@
-{
-  "regions": ["sin1"],
-  "buildCommand": "prisma generate && next build"
-}
