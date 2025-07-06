@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model License {
+  id        String   @id @default(uuid())
+  prefix    String
+  number    String
+  province  String
+  votes     Vote[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([prefix, number, province])
+  @@map("licenses")
+}
+
+model Vote {
+  id              String   @id @default(uuid())
+  licenseId       String
+  license         License  @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+  score           Int      // -10 to +10
+  comment         String?
+  userFingerprint String
+  createdAt       DateTime @default(now())
+
+  @@index([licenseId, userFingerprint, createdAt])
+  @@map("votes")
+}
