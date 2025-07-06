@@ -39,6 +39,14 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Search error:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    })
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    })
   }
 }
