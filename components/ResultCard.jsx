@@ -5,8 +5,9 @@ export default function ResultCard({ license, onVoteSubmit, canVote, userFingerp
   const [showVoteForm, setShowVoteForm] = useState(false)
 
   const totalScore = license.votes.reduce((sum, vote) => sum + vote.score, 0)
-  const latestComment = license.votes
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0]?.comment
+  const allComments = license.votes
+    .filter(vote => vote.comment && vote.comment.trim() !== '')
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
   const getScoreClass = (score) => {
     if (score > 0) return 'score-positive'
@@ -46,10 +47,35 @@ export default function ResultCard({ license, onVoteSubmit, canVote, userFingerp
           </div>
         </div>
 
-        {latestComment && (
+        {allComments.length > 0 && (
           <div className="bg-gray-50 rounded-lg p-3">
-            <div className="text-sm text-gray-600 mb-1">ความคิดเห็นล่าสุด</div>
-            <div className="text-gray-800">{latestComment}</div>
+            <div className="text-sm text-gray-600 mb-3">
+              ความคิดเห็นทั้งหมด ({allComments.length})
+            </div>
+            <div className="space-y-3 max-h-48 overflow-y-auto">
+              {allComments.map((vote, index) => (
+                <div key={vote.id || index} className="border-b border-gray-200 pb-2 last:border-b-0">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className={`text-sm font-medium ${
+                      vote.score > 0 ? 'text-thai-green' : 
+                      vote.score < 0 ? 'text-thai-red' : 'text-gray-600'
+                    }`}>
+                      {vote.score > 0 ? '+' : ''}{vote.score} คะแนน
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {new Date(vote.createdAt).toLocaleDateString('th-TH', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                  </div>
+                  <div className="text-gray-800 text-sm">{vote.comment}</div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
