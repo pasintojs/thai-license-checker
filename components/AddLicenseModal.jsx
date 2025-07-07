@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { getProvincesByRegion } from '../lib/provinces'
 import axios from 'axios'
 
@@ -18,6 +18,19 @@ export default function AddLicenseModal({
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  // Update form data when initialData changes
+  useEffect(() => {
+    if (initialData && Object.keys(initialData).length > 0) {
+      setFormData({
+        prefix: initialData?.prefix || '',
+        number: initialData?.number || '',
+        province: initialData?.province || '',
+        score: 0,
+        comment: ''
+      })
+    }
+  }, [initialData])
 
   const provinces = getProvincesByRegion()
 
